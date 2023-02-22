@@ -1943,7 +1943,6 @@ async function run() {
 
     const { owner, repo } = context.repo;
 
-
     const prefixOnly = core.getInput("prefix_only") === 'true';
     if ((prefixOnly && !body.startsWith(trigger)) || !body.includes(trigger)) {
         core.setOutput("triggered", "false");
@@ -1952,11 +1951,20 @@ async function run() {
 
     core.setOutput("triggered", "true");
 
+    const client = new GitHub(GITHUB_TOKEN);
+
+    const { data: pullRequest } = await client.pulls.get({
+        owner: owner,
+        repo: repo,
+        pull_number: context.payload.issue.number
+    });
+    
+    core.setOutput("branch", pullRequest.head.ref);
+
     if (!reaction) {
         return;
     }
 
-    const client = new GitHub(GITHUB_TOKEN);
     if (context.eventName === "issue_comment") {
         await client.reactions.createForIssueComment({
             owner,
