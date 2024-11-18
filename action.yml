@@ -17,6 +17,8 @@ outputs:
     description: the string 'true' if the trigger was found, otherwise the string 'false'
   comment_body:
     description: The comment body.
+  branch:
+    description: The pr branch.
 runs:
   using: 'node16'
   main: 'dist/index.js'
